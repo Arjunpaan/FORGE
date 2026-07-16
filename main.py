@@ -7,6 +7,16 @@ from dotenv import load_dotenv
 import redis
 import json
 
+from confluent_kafka import Producer
+
+kafka_producer = Producer({'bootstrap.servers': 'localhost:9092'})
+
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"Message delivery failed: {err}")
+    else:
+        print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
+
 # Connect to Redis
 redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
@@ -37,13 +47,13 @@ def test_db():
     cursor.close()
     conn.close()
     return {"total_orders": count}
+
 @app.post("/order")
 def create_order(order: OrderRequest):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
-        # Lock the product row so no other request can read/modify it until we're done
         cursor.execute(
             "SELECT id, stock FROM products WHERE name = %s FOR UPDATE",
             (order.product_name,)
@@ -64,13 +74,11 @@ def create_order(order: OrderRequest):
             conn.close()
             raise HTTPException(status_code=400, detail=f"Insufficient stock. Only {available_stock} left.")
 
-        # Reduce stock
         cursor.execute(
             "UPDATE products SET stock = stock - %s WHERE id = %s",
             (order.quantity, product_id)
         )
 
-        # Insert order
         cursor.execute(
             "INSERT INTO orders (idempotency_key, product_name, quantity, status) VALUES (%s, %s, %s, %s) RETURNING id",
             (order.idempotency_key, order.product_name, order.quantity, "pending")
@@ -80,6 +88,24 @@ def create_order(order: OrderRequest):
         cursor.close()
         conn.close()
 
+        # Invalidate the cache since stock just changed
+        redis_client.delete(f"product:{order.product_name}")
+
+        # Publish order event to Kafka
+        order_event = {
+            "order_id": new_order_id,
+            "product_name": order.product_name,
+            "quantity": order.quantity,
+            "idempotency_key": order.idempotency_key
+        }
+        kafka_producer.produce(
+            'orders',
+            key=str(new_order_id),
+            value=json.dumps(order_event),
+            callback=delivery_report
+        )
+        kafka_producer.flush()
+
         return {
             "message": "Order created successfully",
             "order_id": new_order_id,
@@ -87,8 +113,6 @@ def create_order(order: OrderRequest):
             "quantity": order.quantity,
             "status": "pending"
         }
-        # Invalidate the cache since stock just changed
-        redis_client.delete(f"product:{order.product_name}")
 
     except psycopg2.errors.UniqueViolation:
         conn.rollback()
