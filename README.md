@@ -69,19 +69,18 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 
 ## Project structure
 
-​```
+```bash
 FORGE
-├──main.py
-
-├── worker.py
-├── docker-compose.yml
-├── init-replication.sh
-├── test_race_condition.py
-├── test_stampede.py
-├── chaos_test.py
-├── .env
-└── requirements.txt
-​```
+-main.py
+-worker.py
+-docker-compose.yml
+-init-replication.sh
+-test_race_condition.py
+=test_stampede.py
+-chaos_test.py
+-.env
+-requirements.txt
+```
 
 ---
 
