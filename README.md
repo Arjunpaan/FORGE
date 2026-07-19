@@ -72,7 +72,6 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 
 
 ## Project structure
-
 FORGE/
 ├── main.py                    # FastAPI app — order service, product endpoint
 ├── worker.py                  # Kafka consumer — fulfillment worker
@@ -83,7 +82,6 @@ FORGE/
 ├── chaos_test.py              # Fires concurrent load + simulates DB crash mid-test
 ├── .env                       # Local secrets (not committed)
 └── requirements.txt           # Python dependencies
-
 
 ---
 
