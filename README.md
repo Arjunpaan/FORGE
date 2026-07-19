@@ -54,7 +54,6 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 | **Clean failure under chaos** | Transactional integrity + connection error handling | 50 concurrent orders fired, primary DB killed mid-test → orders before crash succeed, orders during/after fail cleanly (no corruption), system self-recovers after DB restart |
 
 ---
-
 ## Tech stack
 
 | Layer | Technology |
@@ -68,11 +67,10 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 
 ---
 
-
-
-
 ## Project structure
-​FORGE/
+
+​```
+FORGE/
 ├── main.py
 ├── worker.py
 ├── docker-compose.yml
@@ -82,12 +80,16 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 ├── chaos_test.py
 ├── .env
 └── requirements.txt
+​```
+
+---
+
 ## How to run this on your own machine
 
 ### Prerequisites
+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (with WSL2 enabled, on Windows)
 - Python 3.10+
-
 ### Step 1 — Clone the repo
 ```bash
 git clone https://github.com/Arjunpaan/FORGE.git
