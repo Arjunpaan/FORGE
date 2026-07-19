@@ -72,7 +72,7 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 
 
 ## Project structure
-
+​```
 FORGE/
 ├── main.py
 ├── worker.py
@@ -83,9 +83,7 @@ FORGE/
 ├── chaos_test.py
 ├── .env
 └── requirements.txt
-
----
-
+​```
 ## How to run this on your own machine
 
 ### Prerequisites
