@@ -70,8 +70,9 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 ## Project structure
 
 ​```
-FORGE/
-├── main.py
+FORGE
+├──main.py
+
 ├── worker.py
 ├── docker-compose.yml
 ├── init-replication.sh
