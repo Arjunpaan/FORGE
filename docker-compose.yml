@@ -7,10 +7,47 @@ services:
       POSTGRES_USER: forge_user
       POSTGRES_PASSWORD: forge_password
       POSTGRES_DB: forge_db
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-replication.sh:/docker-entrypoint-initdb.d/init-replication.sh
+    command: >
+      postgres
+      -c wal_level=replica
+      -c max_wal_senders=10
+      -c max_replication_slots=10
+      -c hot_standby=on
+
+  postgres_replica:
+    image: postgres:16
+    container_name: forge_postgres_replica
+    restart: always
+    environment:
+      POSTGRES_USER: forge_user
+      POSTGRES_PASSWORD: forge_password
+      POSTGRES_DB: forge_db
+      PGUSER: forge_user
+      PGPASSWORD: forge_password
+    ports:
+      - "5433:5432"
+    depends_on:
+      - postgres
+    entrypoint: |
+      bash -c "
+      if [ -z \"\$(ls -A /var/lib/postgresql/data)\" ]; then
+        until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot --create-slot --host=postgres --port=5432 --username=forge_user
+        do
+        echo 'Waiting for primary to be ready...'
+        sleep 2
+        done
+        echo 'Backup done.'
+      fi
+      chown -R postgres:postgres /var/lib/postgresql/data
+      chmod 0700 /var/lib/postgresql/data
+      exec gosu postgres postgres
+      "
 
   redis:
     image: redis:7
