@@ -75,15 +75,15 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 
 ​```
 FORGE/
-├── main.py                    # FastAPI app — order service, product endpoint
-├── worker.py                  # Kafka consumer — fulfillment worker
-├── docker-compose.yml         # PostgreSQL (primary+replica), Redis, Kafka, Zookeeper
-├── init-replication.sh        # Grants replication permissions to primary on first boot
-├── test_race_condition.py     # Verifies idempotency under concurrent load
-├── test_stampede.py           # Verifies cache stampede protection
-├── chaos_test.py              # Fires concurrent load + simulates DB crash mid-test
-├── .env                       # Local secrets (not committed)
-└── requirements.txt           # Python dependencies
+├── main.py
+├── worker.py
+├── docker-compose.yml
+├── init-replication.sh
+├── test_race_condition.py
+├── test_stampede.py
+├── chaos_test.py
+├── .env
+└── requirements.txt
 ​```
 ---
 
