@@ -72,8 +72,7 @@ Every claim below has been tested, not just implemented — see `Testing` sectio
 
 
 ## Project structure
-​```
-FORGE/
+​FORGE/
 ├── main.py
 ├── worker.py
 ├── docker-compose.yml
@@ -83,7 +82,6 @@ FORGE/
 ├── chaos_test.py
 ├── .env
 └── requirements.txt
-​```
 ## How to run this on your own machine
 
 ### Prerequisites
