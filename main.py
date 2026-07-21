@@ -1,4 +1,6 @@
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, HTTPException
+
 from pydantic import BaseModel
 import psycopg2
 import os
@@ -188,3 +190,68 @@ def get_product(product_name: str):
     redis_client.delete(lock_key)
 
     return product_data
+
+@app.get("/orders")
+def get_recent_orders():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT id, product_name, quantity, status, created_at FROM orders ORDER BY id DESC LIMIT 20"
+    )
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    orders = []
+    for row in rows:
+        orders.append({
+            "id": row[0],
+            "product_name": row[1],
+            "quantity": row[2],
+            "status": row[3],
+            "created_at": row[4].isoformat()
+        })
+    return orders
+
+@app.get("/stats")
+def get_stats():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM orders")
+    total = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM orders WHERE status = 'completed'")
+    completed = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM orders WHERE status = 'pending'")
+    pending = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return {
+        "total_orders": total,
+        "completed": completed,
+        "pending": pending
+    }
+
+@app.get("/products")
+def get_all_products():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, stock, price, category, image_url FROM products ORDER BY category, name")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    products = []
+    for row in rows:
+        products.append({
+            "id": row[0],
+            "name": row[1],
+            "stock": row[2],
+            "price": float(row[3]),
+            "category": row[4],
+            "image": row[5]
+        })
+    return products
+
+@app.get("/dashboard")
+def serve_dashboard():
+    return FileResponse("static/dashboard.html")

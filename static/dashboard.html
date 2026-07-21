@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FORGE — Live Store Dashboard</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        background: #0b0d12;
+        color: #e4e6ec;
+        padding: 32px 40px;
+        min-height: 100vh;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #1c1f28;
+    }
+
+    .header h1 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #f5f5f7;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        color: #6b7080;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .live-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22c55e;
+        margin-right: 6px;
+        box-shadow: 0 0 6px #22c55e;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.35; }
+        100% { opacity: 1; }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: #12141b;
+        border-radius: 12px;
+        padding: 18px 20px;
+        border: 1px solid #1c1f28;
+    }
+
+    .stat-label {
+        color: #6b7080;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #f5f5f7;
+    }
+
+    .stat-completed .stat-value { color: #4ade80; }
+    .stat-pending .stat-value { color: #fbbf24; }
+    .stat-total .stat-value { color: #60a5fa; }
+
+    .panels {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 16px;
+        align-items: start;
+    }
+
+    .panel {
+        background: #12141b;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #1c1f28;
+    }
+
+    .panel h2 {
+        font-size: 14px;
+        margin-bottom: 16px;
+        color: #d0d2db;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .panel h2 .count {
+        font-size: 11.5px;
+        color: #6b7080;
+        font-weight: 500;
+    }
+
+    /* Category filter chips */
+    .category-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    .chip {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+        background: #1c1f28;
+        color: #9497a5;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.15s ease;
+    }
+    .chip:hover { background: #23262f; color: #d0d2db; }
+    .chip.active { background: #2a2f3d; color: #93c5fd; border-color: #3b4256; }
+
+    /* Product grid — real e-commerce card style */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        max-height: 620px;
+        overflow-y: auto;
+        padding-right: 6px;
+    }
+    .product-grid::-webkit-scrollbar { width: 6px; }
+    .product-grid::-webkit-scrollbar-thumb { background: #262a35; border-radius: 10px; }
+
+    .product-card {
+        background: #16181f;
+        border: 1px solid #1c1f28;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .product-card:hover {
+        border-color: #3b4256;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .product-image-wrap {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        background: #1c1f28;
+        position: relative;
+    }
+    .product-image-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .stock-tag {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        backdrop-filter: blur(4px);
+    }
+    .tag-instock { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .tag-low { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .tag-out { background: rgba(239,68,68,0.2); color: #f87171; }
+
+    .product-info { padding: 10px 12px 12px; }
+    .product-category {
+        font-size: 9.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6b7080;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    .product-name {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #e4e6ec;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .product-bottom-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .product-price { font-size: 14px; font-weight: 700; color: #f5f5f7; }
+    .product-stock-count { font-size: 10.5px; color: #6b7080; }
+
+    /* Orders table */
+    .orders-scroll {
+        max-height: 620px;
+        overflow-y: auto;
+    }
+    .orders-scroll::-webkit-scrollbar { width: 6px; }
+    .orders-scroll::-webkit-scrollbar-thumb { background: #262a35; border-radius: 10px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th {
+        text-align: left;
+        color: #6b7080;
+        padding: 8px 6px;
+        border-bottom: 1px solid #1c1f28;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        background: #12141b;
+    }
+    td {
+        padding: 10px 6px;
+        border-bottom: 1px solid #171a22;
+        color: #c8cad3;
+    }
+    tr:hover td { background: #16181f; }
+
+    .status-badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .status-completed { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .status-pending { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+    .empty-state {
+        color: #4b4f5c;
+        font-size: 12.5px;
+        text-align: center;
+        padding: 30px 0;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>FORGE</h1>
+        <div class="subtitle"><span class="live-dot"></span>Distributed Order Processing System — Live Store Dashboard</div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card stat-total">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value" id="total-orders">-</div>
+    </div>
+    <div class="stat-card stat-completed">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="completed-orders">-</div>
+    </div>
+    <div class="stat-card stat-pending">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="pending-orders">-</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Products Live</div>
+        <div class="stat-value" id="total-products">-</div>
+    </div>
+</div>
+
+<div class="panels">
+    <div class="panel">
+        <h2>Store Catalog <span class="count" id="product-count-label"></span></h2>
+        <div class="category-chips" id="category-chips"></div>
+        <div class="product-grid" id="products-container"></div>
+    </div>
+
+    <div class="panel">
+        <h2>Recent Orders <span class="count">live</span></h2>
+        <div class="orders-scroll">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Product</th><th>Status</th><th>Time</th></tr>
+                </thead>
+                <tbody id="orders-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+let allProducts = [];
+let activeCategory = 'All';
+
+function stockTag(stock) {
+    if (stock === 0) return { cls: 'tag-out', label: 'Out of stock' };
+    if (stock <= 20) return { cls: 'tag-low', label: 'Low stock' };
+    return { cls: 'tag-instock', label: 'In stock' };
+}
+
+function renderProducts() {
+    const filtered = activeCategory === 'All'
+        ? allProducts
+        : allProducts.filter(p => p.category === activeCategory);
+
+    document.getElementById('product-count-label').textContent = `${filtered.length} items`;
+
+    if (filtered.length === 0) {
+        document.getElementById('products-container').innerHTML = '<div class="empty-state">No products in this category</div>';
+        return;
+    }
+
+    document.getElementById('products-container').innerHTML = filtered.map(p => {
+        const tag = stockTag(p.stock);
+        return `
+            <div class="product-card">
+                <div class="product-image-wrap">
+                    <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1c1f28/6b7080?text=No+Image'">
+                    <div class="stock-tag ${tag.cls}">${tag.label}</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">${p.category}</div>
+                    <div class="product-name" title="${p.name}">${p.name}</div>
+                    <div class="product-bottom-row">
+                        <div class="product-price">₹${p.price.toFixed(0)}</div>
+                        <div class="product-stock-count">${p.stock} left</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderCategoryChips() {
+    const categories = ['All', ...new Set(allProducts.map(p => p.category))];
+    document.getElementById('category-chips').innerHTML = categories.map(cat => `
+        <div class="chip ${cat === activeCategory ? 'active' : ''}" onclick="setCategory('${cat}')">${cat}</div>
+    `).join('');
+}
+
+function setCategory(cat) {
+    activeCategory = cat;
+    renderCategoryChips();
+    renderProducts();
+}
+
+async function refreshDashboard() {
+    try {
+        const stats = await fetch('/stats').then(r => r.json());
+        document.getElementById('total-orders').textContent = stats.total_orders;
+        document.getElementById('completed-orders').textContent = stats.completed;
+        document.getElementById('pending-orders').textContent = stats.pending;
+
+        const products = await fetch('/products').then(r => r.json());
+        allProducts = products;
+        document.getElementById('total-products').textContent = products.length;
+
+        if (document.getElementById('category-chips').innerHTML === '') {
+            renderCategoryChips();
+        }
+        renderProducts();
+
+        const orders = await fetch('/orders').then(r => r.json());
+        document.getElementById('orders-body').innerHTML = orders.map(o => `
+            <tr>
+                <td>#${o.id}</td>
+                <td>${o.product_name}</td>
+                <td><span class="status-badge status-${o.status}">${o.status}</span></td>
+                <td>${new Date(o.created_at).toLocaleTimeString()}</td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        console.error('Dashboard refresh failed:', err);
+    }
+}
+
+refreshDashboard();
+setInterval(refreshDashboard, 3000);
+</script>
+
+</body>
+</html>
