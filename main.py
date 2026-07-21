@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 
 import redis
 import json
-
+import threading
+import time
 from confluent_kafka import Producer
 
 kafka_producer = Producer({'bootstrap.servers': 'localhost:9092'})
@@ -52,8 +53,12 @@ def test_db():
 
 @app.post("/order")
 def create_order(order: OrderRequest):
+    if chaos_mode["active"]:
+        raise HTTPException(status_code=503, detail="Service temporarily unavailable — primary database unreachable (simulated outage)")
+
     conn = get_db_connection()
     cursor = conn.cursor()
+    # ... rest of the function stays exactly the same
 
     try:
         cursor.execute(
@@ -251,6 +256,28 @@ def get_all_products():
             "image": row[5]
         })
     return products
+
+chaos_mode = {"active": False}
+
+@app.post("/chaos/trigger")
+def trigger_chaos():
+    if chaos_mode["active"]:
+        return {"message": "Chaos mode already active"}
+    
+    chaos_mode["active"] = True
+    
+    def reset_chaos():
+        time.sleep(10)
+        chaos_mode["active"] = False
+    
+    threading.Thread(target=reset_chaos, daemon=True).start()
+    return {"message": "Chaos mode activated for 10 seconds", "duration": 10}
+
+@app.get("/chaos/status")
+def chaos_status():
+    return {"active": chaos_mode["active"]}
+
+
 
 @app.get("/dashboard")
 def serve_dashboard():

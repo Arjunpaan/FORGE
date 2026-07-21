@@ -18,7 +18,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        margin-bottom: 28px;
+        margin-bottom: 20px;
         padding-bottom: 20px;
         border-bottom: 1px solid #1c1f28;
     }
@@ -53,9 +53,55 @@
         100% { opacity: 1; }
     }
 
+    .controls { display: flex; gap: 10px; }
+
+    .btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #262a35;
+        background: #16181f;
+        color: #d0d2db;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .btn:hover { background: #1c1f28; border-color: #3b4256; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+
+    .btn-danger { background: #dc2626; border-color: #dc2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+
+    .btn-warn { background: #d97706; border-color: #d97706; color: #fff; }
+    .btn-warn:hover { background: #b45309; }
+
+    /* Chaos banner */
+    .chaos-banner {
+        display: none;
+        background: linear-gradient(90deg, rgba(220,38,38,0.15), rgba(220,38,38,0.05));
+        border: 1px solid rgba(220,38,38,0.4);
+        border-radius: 10px;
+        padding: 12px 18px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fca5a5;
+    }
+    .chaos-banner.active { display: flex; }
+    .chaos-banner .dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: #ef4444;
+        animation: pulse 0.8s infinite;
+    }
+
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 14px;
         margin-bottom: 24px;
     }
@@ -69,7 +115,7 @@
 
     .stat-label {
         color: #6b7080;
-        font-size: 11.5px;
+        font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.8px;
         margin-bottom: 8px;
@@ -85,10 +131,11 @@
     .stat-completed .stat-value { color: #4ade80; }
     .stat-pending .stat-value { color: #fbbf24; }
     .stat-total .stat-value { color: #60a5fa; }
+    .stat-failed .stat-value { color: #f87171; }
 
     .panels {
         display: grid;
-        grid-template-columns: 1.6fr 1fr;
+        grid-template-columns: 1.4fr 1fr 0.9fr;
         gap: 16px;
         align-items: start;
     }
@@ -110,19 +157,9 @@
         justify-content: space-between;
     }
 
-    .panel h2 .count {
-        font-size: 11.5px;
-        color: #6b7080;
-        font-weight: 500;
-    }
+    .panel h2 .count { font-size: 11.5px; color: #6b7080; font-weight: 500; }
 
-    /* Category filter chips */
-    .category-chips {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-    }
+    .category-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .chip {
         padding: 5px 12px;
         border-radius: 20px;
@@ -137,12 +174,11 @@
     .chip:hover { background: #23262f; color: #d0d2db; }
     .chip.active { background: #2a2f3d; color: #93c5fd; border-color: #3b4256; }
 
-    /* Product grid — real e-commerce card style */
     .product-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 12px;
-        max-height: 620px;
+        max-height: 560px;
         overflow-y: auto;
         padding-right: 6px;
     }
@@ -170,12 +206,7 @@
         background: #1c1f28;
         position: relative;
     }
-    .product-image-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
+    .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .stock-tag {
         position: absolute;
@@ -194,77 +225,79 @@
     .tag-out { background: rgba(239,68,68,0.2); color: #f87171; }
 
     .product-info { padding: 10px 12px 12px; }
-    .product-category {
-        font-size: 9.5px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #6b7080;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
+    .product-category { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7080; font-weight: 600; margin-bottom: 4px; }
     .product-name {
-        font-size: 12.5px;
+        font-size: 12px; font-weight: 600; color: #e4e6ec; margin-bottom: 6px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .product-bottom-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .product-price { font-size: 13.5px; font-weight: 700; color: #f5f5f7; }
+    .product-stock-count { font-size: 10px; color: #6b7080; }
+
+    .order-btn {
+        width: 100%;
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #262a35;
+        background: #1c1f28;
+        color: #93c5fd;
+        font-size: 11px;
         font-weight: 600;
-        color: #e4e6ec;
-        margin-bottom: 6px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        cursor: pointer;
+        transition: all 0.15s ease;
     }
-    .product-bottom-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .product-price { font-size: 14px; font-weight: 700; color: #f5f5f7; }
-    .product-stock-count { font-size: 10.5px; color: #6b7080; }
+    .order-btn:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .order-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* Orders table */
-    .orders-scroll {
-        max-height: 620px;
-        overflow-y: auto;
-    }
+    .orders-scroll { max-height: 560px; overflow-y: auto; }
     .orders-scroll::-webkit-scrollbar { width: 6px; }
     .orders-scroll::-webkit-scrollbar-thumb { background: #262a35; border-radius: 10px; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
     th {
-        text-align: left;
-        color: #6b7080;
-        padding: 8px 6px;
-        border-bottom: 1px solid #1c1f28;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 10px;
-        letter-spacing: 0.5px;
-        position: sticky;
-        top: 0;
-        background: #12141b;
+        text-align: left; color: #6b7080; padding: 8px 6px;
+        border-bottom: 1px solid #1c1f28; font-weight: 600;
+        text-transform: uppercase; font-size: 9.5px; letter-spacing: 0.5px;
+        position: sticky; top: 0; background: #12141b;
     }
-    td {
-        padding: 10px 6px;
-        border-bottom: 1px solid #171a22;
-        color: #c8cad3;
-    }
+    td { padding: 9px 6px; border-bottom: 1px solid #171a22; color: #c8cad3; }
     tr:hover td { background: #16181f; }
 
     .status-badge {
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
+        padding: 3px 9px; border-radius: 20px; font-size: 9.5px;
+        font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
     }
     .status-completed { background: rgba(34,197,94,0.15); color: #4ade80; }
     .status-pending { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .status-failed { background: rgba(239,68,68,0.15); color: #f87171; }
 
-    .empty-state {
-        color: #4b4f5c;
-        font-size: 12.5px;
-        text-align: center;
-        padding: 30px 0;
+    /* Activity log */
+    .log-container {
+        max-height: 560px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column-reverse;
     }
+    .log-container::-webkit-scrollbar { width: 6px; }
+    .log-container::-webkit-scrollbar-thumb { background: #262a35; border-radius: 10px; }
+
+    .log-entry {
+        font-size: 11.5px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        font-family: 'Consolas', monospace;
+        line-height: 1.4;
+        border-left: 3px solid #262a35;
+        background: #16181f;
+    }
+    .log-success { border-left-color: #22c55e; color: #86efac; }
+    .log-error { border-left-color: #ef4444; color: #fca5a5; }
+    .log-info { border-left-color: #60a5fa; color: #93c5fd; }
+    .log-time { color: #4b4f5c; margin-right: 6px; }
+
+    .empty-state { color: #4b4f5c; font-size: 12px; text-align: center; padding: 30px 0; }
 </style>
 </head>
 <body>
@@ -274,6 +307,15 @@
         <h1>FORGE</h1>
         <div class="subtitle"><span class="live-dot"></span>Distributed Order Processing System — Live Store Dashboard</div>
     </div>
+    <div class="controls">
+        <button class="btn btn-warn" onclick="simulateStampede()">⚡ Simulate Stampede</button>
+        <button class="btn btn-danger" id="chaos-btn" onclick="triggerChaos()">🔥 Trigger Chaos (10s)</button>
+    </div>
+</div>
+
+<div class="chaos-banner" id="chaos-banner">
+    <span class="dot"></span>
+    <span id="chaos-banner-text">SIMULATED OUTAGE ACTIVE — orders will fail until recovery</span>
 </div>
 
 <div class="stats-grid">
@@ -288,6 +330,10 @@
     <div class="stat-card stat-pending">
         <div class="stat-label">Pending</div>
         <div class="stat-value" id="pending-orders">-</div>
+    </div>
+    <div class="stat-card stat-failed">
+        <div class="stat-label">Failed (session)</div>
+        <div class="stat-value" id="failed-orders">0</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Products Live</div>
@@ -306,18 +352,35 @@
         <h2>Recent Orders <span class="count">live</span></h2>
         <div class="orders-scroll">
             <table>
-                <thead>
-                    <tr><th>ID</th><th>Product</th><th>Status</th><th>Time</th></tr>
-                </thead>
+                <thead><tr><th>ID</th><th>Product</th><th>Status</th><th>Time</th></tr></thead>
                 <tbody id="orders-body"></tbody>
             </table>
         </div>
+    </div>
+
+    <div class="panel">
+        <h2>Activity Log <span class="count">real-time</span></h2>
+        <div class="log-container" id="log-container"></div>
     </div>
 </div>
 
 <script>
 let allProducts = [];
 let activeCategory = 'All';
+let failedCount = 0;
+
+function nowTime() {
+    return new Date().toLocaleTimeString();
+}
+
+function addLog(message, type = 'info') {
+    const container = document.getElementById('log-container');
+    const entry = document.createElement('div');
+    entry.className = `log-entry log-${type}`;
+    entry.innerHTML = `<span class="log-time">${nowTime()}</span>${message}`;
+    container.appendChild(entry);
+    while (container.children.length > 50) container.removeChild(container.firstChild);
+}
 
 function stockTag(stock) {
     if (stock === 0) return { cls: 'tag-out', label: 'Out of stock' };
@@ -325,11 +388,92 @@ function stockTag(stock) {
     return { cls: 'tag-instock', label: 'In stock' };
 }
 
-function renderProducts() {
-    const filtered = activeCategory === 'All'
-        ? allProducts
-        : allProducts.filter(p => p.category === activeCategory);
+async function placeOrder(productName, btnEl) {
+    if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Placing...'; }
+    const key = `dashboard-${productName.replace(/\s+/g, '-')}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+    try {
+        const res = await fetch('/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idempotency_key: key, product_name: productName, quantity: 1 })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            addLog(`Order #${data.order_id} placed — ${productName}`, 'success');
+        } else {
+            failedCount++;
+            document.getElementById('failed-orders').textContent = failedCount;
+            addLog(`Order FAILED — ${productName}: ${data.detail}`, 'error');
+        }
+    } catch (err) {
+        failedCount++;
+        document.getElementById('failed-orders').textContent = failedCount;
+        addLog(`Order FAILED — ${productName}: network error`, 'error');
+    }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Place Order'; }
+    refreshDashboard();
+}
 
+async function simulateStampede() {
+    addLog('Firing 15 concurrent requests at the same product...', 'info');
+    const target = allProducts[0]?.name || 'Wireless Mouse';
+    const requests = [];
+    for (let i = 0; i < 15; i++) {
+        const key = `stampede-${Date.now()}-${i}`;
+        requests.push(
+            fetch('/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idempotency_key: key, product_name: target, quantity: 1 })
+            }).then(async r => {
+                const data = await r.json();
+                if (r.ok) {
+                    addLog(`Stampede: Order #${data.order_id} succeeded`, 'success');
+                } else {
+                    failedCount++;
+                    document.getElementById('failed-orders').textContent = failedCount;
+                    addLog(`Stampede: request failed — ${data.detail || 'error'}`, 'error');
+                }
+            }).catch(() => {
+                failedCount++;
+                document.getElementById('failed-orders').textContent = failedCount;
+                addLog('Stampede: request failed — network error', 'error');
+            })
+        );
+    }
+    await Promise.all(requests);
+    addLog('Stampede simulation complete.', 'info');
+    refreshDashboard();
+}
+
+async function triggerChaos() {
+    const btn = document.getElementById('chaos-btn');
+    btn.disabled = true;
+    const res = await fetch('/chaos/trigger', { method: 'POST' });
+    const data = await res.json();
+    addLog(`⚠️ Chaos triggered — simulated outage for ${data.duration || 10}s`, 'error');
+
+    const banner = document.getElementById('chaos-banner');
+    banner.classList.add('active');
+    let remaining = data.duration || 10;
+    const bannerText = document.getElementById('chaos-banner-text');
+    bannerText.textContent = `SIMULATED OUTAGE ACTIVE — ${remaining}s remaining — orders will fail`;
+
+    const countdown = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+            clearInterval(countdown);
+            banner.classList.remove('active');
+            btn.disabled = false;
+            addLog('✅ System recovered — orders processing normally again', 'success');
+        } else {
+            bannerText.textContent = `SIMULATED OUTAGE ACTIVE — ${remaining}s remaining — orders will fail`;
+        }
+    }, 1000);
+}
+
+function renderProducts() {
+    const filtered = activeCategory === 'All' ? allProducts : allProducts.filter(p => p.category === activeCategory);
     document.getElementById('product-count-label').textContent = `${filtered.length} items`;
 
     if (filtered.length === 0) {
@@ -339,6 +483,7 @@ function renderProducts() {
 
     document.getElementById('products-container').innerHTML = filtered.map(p => {
         const tag = stockTag(p.stock);
+        const safeName = p.name.replace(/'/g, "\\'");
         return `
             <div class="product-card">
                 <div class="product-image-wrap">
@@ -352,6 +497,9 @@ function renderProducts() {
                         <div class="product-price">₹${p.price.toFixed(0)}</div>
                         <div class="product-stock-count">${p.stock} left</div>
                     </div>
+                    <button class="order-btn" onclick="placeOrder('${safeName}', this)" ${p.stock === 0 ? 'disabled' : ''}>
+                        ${p.stock === 0 ? 'Out of Stock' : 'Place Order'}
+                    </button>
                 </div>
             </div>
         `;
@@ -382,9 +530,7 @@ async function refreshDashboard() {
         allProducts = products;
         document.getElementById('total-products').textContent = products.length;
 
-        if (document.getElementById('category-chips').innerHTML === '') {
-            renderCategoryChips();
-        }
+        if (document.getElementById('category-chips').innerHTML === '') renderCategoryChips();
         renderProducts();
 
         const orders = await fetch('/orders').then(r => r.json());
@@ -401,6 +547,7 @@ async function refreshDashboard() {
     }
 }
 
+addLog('Dashboard initialized.', 'info');
 refreshDashboard();
 setInterval(refreshDashboard, 3000);
 </script>
