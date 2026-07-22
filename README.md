@@ -85,11 +85,26 @@ graph TD
     W1 --> W2
     W2 -->|mark completed, or skip if already done| P1
 
-    style API fill:#1d4ed8,color:#fff
-    style Cache fill:#b91c1c,color:#fff
-    style DB fill:#047857,color:#fff
-    style Stream fill:#6d28d9,color:#fff
-    style Worker fill:#c2410c,color:#fff
+    style API fill:#1e3a8a,color:#ffffff
+    style Cache fill:#7f1d1d,color:#ffffff
+    style DB fill:#064e3b,color:#ffffff
+    style Stream fill:#4c1d95,color:#ffffff
+    style Worker fill:#7c2d12,color:#ffffff
+
+    style U fill:#1c1f28,color:#ffffff,stroke:#475569
+    style A1 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style A2 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style A3 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style A4 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style R1 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style R2 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style P1 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style P2 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style K1 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style W1 fill:#1c1f28,color:#ffffff,stroke:#475569
+    style W2 fill:#1c1f28,color:#ffffff,stroke:#475569
+
+
 ```
 
 **How a request actually flows through this:**
