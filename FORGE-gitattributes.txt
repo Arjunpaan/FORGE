@@ -1,0 +1,15 @@
+# Save this file as `.gitattributes` in the ROOT of the FORGE repository.
+#
+# Why: GitHub's language detector (Linguist) counts bytes, and FORGE's
+# static/dashboard.html is larger than all the Python combined. So GitHub
+# currently labels a distributed-systems backend as an "HTML" project.
+# These rules exclude the dashboard from language stats so the repo shows
+# as Python — which is what it actually is.
+
+static/*            linguist-vendored
+static/dashboard.html  linguist-vendored
+*.html              linguist-detectable=false
+
+# Optional: if you keep notebooks anywhere in the repo, they otherwise
+# dominate the stats too.
+*.ipynb             linguist-vendored
